@@ -39,6 +39,13 @@ function draw(){
   background(51);
   //pieChart(300,wholePi);
   colorMode(HSB);
+
+  for (var i = 0; i < categoryList.length; i++) {
+    var l = categoryList[i];
+    stroke(l.c,150,150);
+    text(l.id,l.x,l.y);
+  }
+
   for (var i = 0; i < stories.length; i++) {
     var s = stories[i];
     s.behaviors();
@@ -46,12 +53,6 @@ function draw(){
     s.show();
   }
   
-  for (var i = 0; i < categoryList.length; i++) {
-    var l = categoryList[i];
-    stroke(l.c,150,150);
-    text(l.id,l.x,l.y);
-  }
-
 }
 
 function keyPressed(){

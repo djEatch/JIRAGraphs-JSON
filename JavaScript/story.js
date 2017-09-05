@@ -11,7 +11,7 @@ function Story(_name, _points, _assignee, _platform, _phase, _epic){
     
     this.vel = p5.Vector.random2D();
     this.acc = createVector();
-    this.r = _points;
+    this.r = _points*1.5;
     this.maxspeed = 5;
     this.maxforce = 1;
     this.maxfleespeed =1;
@@ -22,24 +22,6 @@ function Story(_name, _points, _assignee, _platform, _phase, _epic){
     this.c = 255;
     this.target = createVector(width/2,height/2);
 
-    // this.nooverlap = function(){
-    //     var record = Infinity;
-    //     var closest = null;
-    //     for (var i = stories.length - 1; i >= 0; i--) {
-    //       var d = this.pos.dist(stories[i]);
-    
-    //         if (d < record && d < (this.r+stories[i].r) && this.name != stories[i].name) {
-    //           record = d;
-    //           closest = stories[i];
-    //         }
-    //       }
-    
-    //       if (closest != null) {
-    //         return this.seek(closest);
-    //       } else {
-    //         return createVector(0, 0)
-    //       }
-    //   }
 }
 
 
@@ -66,9 +48,10 @@ Story.prototype.behaviors = function() {
         var other = stories[i]
         var d = this.pos.dist(other.pos);
 
-        if (d < (this.r+other.r)  && this.name != other.name) {
-            this.pos.add(-random(this.r), -random(this.r));
-            other.pos.add(random(other.r), random(other.r));
+        while (d < (this.r/2+other.r/2)  && this.name != other.name) {
+            d = this.pos.dist(other.pos);
+            this.pos.add(random(-this.r/2,other.r/2), random(this.r/2,-other.r/2));
+            other.pos.add(random(this.r/2,-other.r/2), random(-this.r/2,other.r/2));
         }
     }
   }
@@ -106,7 +89,7 @@ Story.prototype.behaviors = function() {
   
   Story.prototype.show = function() {
     colorMode(HSB);
-    stroke(this.c,150,150);
+    stroke(this.c,50,100,0.5);
     strokeWeight(this.r);
     point(this.pos.x, this.pos.y);
   }
