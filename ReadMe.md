@@ -1,0 +1,3 @@
+AIM: to take JSON from JIRA and graph it...
+
+Achieved: take a JSON local file and graph against one variable (both for colour and position)
