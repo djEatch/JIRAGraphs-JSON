@@ -18,6 +18,9 @@ var colSel;
 
 var categories = ["Assignee","Epic","Platform"];
 
+var gSaturation = 50;
+var gBrightness = 100;
+var gAlpha = 0.5;
 
 function preload(){
   JSONfile = loadJSON("./test.json",gotJSON);
@@ -60,25 +63,45 @@ function draw(){
   //pieChart(300,wholePi);
   colorMode(HSB);
 
-  //show group names
-  for (var i = 0; i < positionList.length; i++) {
-    var l = positionList[i];
-    //stroke(l.c,150,150);
-    stroke(0);
-    strokeWeight(0);
-    textSize(20);
-    textAlign(CENTER);
-    text(l.id,l.x,l.y);
-  }
+  showGroupNames();
+  drawStories();
+  showLegend();
 
-  //update and draw stories
+}
+
+function drawStories(){
   for (var i = 0; i < stories.length; i++) {
     var s = stories[i];
     s.behaviors();
     s.update();
     s.show();
   }
-  
+}
+
+function showGroupNames(){
+  for (var i = 0; i < positionList.length; i++) {
+    var l = positionList[i];
+    //stroke(0);
+    strokeWeight(0);
+    textSize(20);
+    textAlign(CENTER,CENTER);
+    fill(10);
+    text(l.id,l.x,l.y);
+  }
+}
+
+function showLegend(){
+  for (var i = 0; i < colourList.length; i++) {
+    var c = colourList[i];
+    
+    strokeWeight(0);
+    textSize(20);
+    textAlign(LEFT,TOP);
+    fill(c.c,gSaturation,gBrightness,gAlpha);
+    rect(10,50+(i*20),textWidth(c.id),20);
+    fill(10);
+    text(c.id,10,50+(i*20))
+  }
 }
 
 // function keyPressed(){

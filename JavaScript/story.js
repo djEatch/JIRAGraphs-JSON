@@ -89,7 +89,7 @@ Story.prototype.behaviors = function() {
   
   Story.prototype.show = function() {
     colorMode(HSB);
-    stroke(this.c,50,100,0.5);
+    stroke(this.c,gSaturation, gBrightness, gAlpha);
     strokeWeight(this.r);
     point(this.pos.x, this.pos.y);
   }
