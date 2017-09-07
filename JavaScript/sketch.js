@@ -10,8 +10,10 @@ var wholePi = [];
 var stories = [];
 
 var mode = "Assignee";
-var labelList = [];
+
 var categoryList = [];
+var positionList = [];
+var colourList = [];
 
 function preload(){
   JSONfile = loadJSON("./test.json",gotJSON);
@@ -22,7 +24,7 @@ function gotJSON(data){
 }
 
 function setup() {
-    createCanvas(800,600);
+    createCanvas(window.innerWidth,window.innerHeight);
     background(51);
     //fill(100);
     //createP('Connecting to: ' + serverAddress).parent('headerDiv');
@@ -40,9 +42,12 @@ function draw(){
   //pieChart(300,wholePi);
   colorMode(HSB);
 
-  for (var i = 0; i < categoryList.length; i++) {
-    var l = categoryList[i];
-    stroke(l.c,150,150);
+  for (var i = 0; i < positionList.length; i++) {
+    var l = positionList[i];
+    //stroke(l.c,150,150);
+    stroke(0);
+    strokeWeight(0);
+    textSize(20);
     text(l.id,l.x,l.y);
   }
 
@@ -64,9 +69,126 @@ function keyPressed(){
     } else {
       mode="Assignee"
     }
-    setMode(mode);
+    setAllMode(mode,"Assignee");
   }
 }
+
+function getKey(_thing, _i){
+  var key;
+  switch(_thing){
+    case "Assignee":
+      key = stories[_i].assignee;
+      break;
+    case "Epic":
+      key = stories[_i].epic;
+      break;
+    case "Platform":
+      key = stories[_i].platform;
+      break;
+    default:
+      alert("BBBBBAD");
+      key = null;
+      break;
+  }
+
+  return key
+}
+
+function buildList(_list, _key){
+  var isInList = false;
+  for (var j = 0; j< _list.length; j++ ){
+    if (_list[j].id == _key){
+      isInList = true;
+      _list[j].count +=1;
+      break
+    }
+  }
+  if(!isInList){
+    _list.push({id:_key,count:1})
+  }
+}
+
+function setAllMode(_posmode, _colmode){
+  
+    positionList = [];
+    colourList = [];
+  
+    for (var i = 0; i < stories.length; i++) {
+      var posKey = getKey(_posmode,i);
+      var colKey = getKey(_colmode,i);
+
+      buildList(positionList, posKey);
+      buildList(colourList, colKey);
+    }
+  
+    var colourSplit = 360/colourList.length //360 for HSB, or 255 for Grey
+    var degreeSplit = 360/positionList.length
+  
+    for (var j = 0; j< positionList.length; j++ ){
+      positionList[j].x = ((min(height,width)/2)-20) * cos(radians(j*degreeSplit)) + width/2;
+      positionList[j].y = ((min(height,width)/2)-20) * sin(radians(j*degreeSplit)) + height/2;
+    }
+
+    for (var j = 0; j< colourList.length; j++ ){
+      colourList[j].c = colourSplit*(j + 1);
+    }
+  
+    console.log(positionList);
+    console.log(colourList);
+  
+    for (var i = 0; i < stories.length; i++) {
+      var s = stories[i];
+      for (var j = 0; j< positionList.length; j++ ){
+        var include = false;
+        switch(_posmode){
+          case "Assignee":
+            include = (positionList[j].id == s.assignee);
+            break;
+          case "Epic":
+            include = (positionList[j].id == s.epic);
+            break;
+          case "Platform":
+            include = (positionList[j].id == s.platform);
+            break;
+          default:
+            alert("BBBBBAD");
+            break;
+        }
+        if (include){
+          s.target = createVector(positionList[j].x, positionList[j].y);
+          break
+        }
+      }
+    }
+
+    for (var i = 0; i < stories.length; i++) {
+      var s = stories[i];
+      for (var j = 0; j< colourList.length; j++ ){
+        var include = false;
+        switch(_colmode){
+          case "Assignee":
+            include = (colourList[j].id == s.assignee);
+            break;
+          case "Epic":
+            include = (colourList[j].id == s.epic);
+            break;
+          case "Platform":
+            include = (colourList[j].id == s.platform);
+            break;
+          default:
+            alert("BBBBBAD");
+            break;
+        }
+        if (include){
+          s.c = colourList[j].c;
+          break
+        }
+      }
+    }
+  }
+
+
+
 
 function setMode(_mode){
   
