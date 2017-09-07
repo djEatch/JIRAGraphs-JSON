@@ -190,36 +190,38 @@ function setAllMode(_posmode, _colmode){
 function extractIssues(){
   for(var i = 0; i<JSONfile.issues.length;i++){
     if(JSONfile.issues[i].fields.issuetype.name=="Story"){
-      console.log(JSONfile.issues[i].key, JSONfile.issues[i].fields.customfield_10353, JSONfile.issues[i].fields.fixVersions[0].name, JSONfile.issues[i].fields.assignee.displayName);
-      var newPiData = {title: JSONfile.issues[i].key, assignee: JSONfile.issues[i].fields.assignee.displayName, points:JSONfile.issues[i].fields.customfield_10353, percentage:undefined };
-      if (newPiData.points) {wholePi.push(newPiData);}
+      // console.log(JSONfile.issues[i].key, JSONfile.issues[i].fields.customfield_10353, JSONfile.issues[i].fields.fixVersions[0].name, JSONfile.issues[i].fields.assignee.displayName);
+      // var newPiData = {title: JSONfile.issues[i].key, assignee: JSONfile.issues[i].fields.assignee.displayName, points:JSONfile.issues[i].fields.customfield_10353, percentage:undefined };
+      // if (newPiData.points) {wholePi.push(newPiData);}
 
-      var _assignee = JSONfile.issues[i].fields.assignee.displayName;
-      var _name = JSONfile.issues[i].key;
       var _points = JSONfile.issues[i].fields.customfield_10353;
-      var _fixVersion = JSONfile.issues[i].fields.fixVersions[0].name.split("-")
-      var _platform = _fixVersion[0] + "-" + _fixVersion[1];
-      var _phase = _fixVersion[1].split(" ")[0]
-      var _epic = JSONfile.issues[i].fields.customfield_10554;
+
       if (_points){
+        var _assignee = JSONfile.issues[i].fields.assignee.displayName;
+        var _name = JSONfile.issues[i].key;
+        var _fixVersion = JSONfile.issues[i].fields.fixVersions[0].name.split("-")
+        var _platform = _fixVersion[0] + "-" + _fixVersion[1];
+        var _phase = _fixVersion[1].split(" ")[0]
+        var _epic = JSONfile.issues[i].fields.customfield_10554;
+
         var story = new Story(_name,_points,_assignee, _platform, _phase, _epic)
         stories.push(story);
       }
     }
   }
 
-  var piTotalAmount = 0;
-  for(var i = 0; i<wholePi.length;i++){
-    if(!wholePi[i].points){wholePi[i].points = 0;}
-    piTotalAmount+=wholePi[i].points;
+  // var piTotalAmount = 0;
+  // for(var i = 0; i<wholePi.length;i++){
+  //   if(!wholePi[i].points){wholePi[i].points = 0;}
+  //   piTotalAmount+=wholePi[i].points;
   
-  }
-  for(var i = 0; i<wholePi.length;i++){
-    wholePi[i].percentage = wholePi[i].points/piTotalAmount*100;
-  }
+  // }
+  // for(var i = 0; i<wholePi.length;i++){
+  //   wholePi[i].percentage = wholePi[i].points/piTotalAmount*100;
+  // }
 
-  console.log(wholePi);
-  pieChart(300,wholePi);
+  // console.log(wholePi);
+  // pieChart(300,wholePi);
 
 }
 
