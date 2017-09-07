@@ -9,11 +9,15 @@ var piData = {};
 var wholePi = [];
 var stories = [];
 
-var mode = "Assignee";
+var posMode = "Assignee";
+var colMode = "Assignee";
 
 var categoryList = [];
 var positionList = [];
 var colourList = [];
+
+var posSel;
+var colSel;
 
 function preload(){
   JSONfile = loadJSON("./test.json",gotJSON);
@@ -35,6 +39,20 @@ function setup() {
     //JSONfile = loadJSON("https://cors.io/?u=http://svn.na-dc.ah.ab:8080/rest/api/2/search?jql=Project=CDES",gotJSON);
 
     extractIssues();
+
+    posSel = createSelect();
+    posSel.position(10, 10);
+    posSel.option('Assignee');
+    posSel.option('Epic');
+    posSel.option('Platform');
+    posSel.changed(function(){posMode = posSel.value();setAllMode(posMode,colMode);});
+
+    colSel = createSelect();
+    colSel.position(10, 30);
+    colSel.option('Assignee');
+    colSel.option('Epic');
+    colSel.option('Platform');
+    colSel.changed(function(){colMode = colSel.value();setAllMode(posMode,colMode);});
 }
 
 function draw(){
@@ -48,6 +66,7 @@ function draw(){
     stroke(0);
     strokeWeight(0);
     textSize(20);
+    textAlign(CENTER);
     text(l.id,l.x,l.y);
   }
 
@@ -60,18 +79,18 @@ function draw(){
   
 }
 
-function keyPressed(){
-  if (keyCode== 32){
-    if(mode=="Assignee"){
-      mode="Epic";
-    } else if(mode=="Epic"){
-      mode="Platform"
-    } else {
-      mode="Assignee"
-    }
-    setAllMode(mode,"Assignee");
-  }
-}
+// function keyPressed(){
+//   if (keyCode== 32){
+//     if(mode=="Assignee"){
+//       mode="Epic";
+//     } else if(mode=="Epic"){
+//       mode="Platform"
+//     } else {
+//       mode="Assignee"
+//     }
+//     setAllMode(mode,"Assignee");
+//   }
+// }
 
 function getKey(_thing, _i){
   var key;
@@ -92,6 +111,26 @@ function getKey(_thing, _i){
   }
 
   return key
+}
+
+function getInclude(_mode,_list, _j, _s){
+  var include = false;
+  switch(_mode){
+    case "Assignee":
+      include = (_list[_j].id == _s.assignee);
+      break;
+    case "Epic":
+      include = (_list[_j].id == _s.epic);
+      break;
+    case "Platform":
+      include = (_list[_j].id == _s.platform);
+      break;
+    default:
+      alert("BBBBBAD");
+      include=undefined;
+      break;
+  }
+  return include;
 }
 
 function buildList(_list, _key){
@@ -139,46 +178,14 @@ function setAllMode(_posmode, _colmode){
     for (var i = 0; i < stories.length; i++) {
       var s = stories[i];
       for (var j = 0; j< positionList.length; j++ ){
-        var include = false;
-        switch(_posmode){
-          case "Assignee":
-            include = (positionList[j].id == s.assignee);
-            break;
-          case "Epic":
-            include = (positionList[j].id == s.epic);
-            break;
-          case "Platform":
-            include = (positionList[j].id == s.platform);
-            break;
-          default:
-            alert("BBBBBAD");
-            break;
-        }
+        var include = getInclude(_posmode,positionList,j,s)
         if (include){
           s.target = createVector(positionList[j].x, positionList[j].y);
           break
         }
       }
-    }
-
-    for (var i = 0; i < stories.length; i++) {
-      var s = stories[i];
       for (var j = 0; j< colourList.length; j++ ){
-        var include = false;
-        switch(_colmode){
-          case "Assignee":
-            include = (colourList[j].id == s.assignee);
-            break;
-          case "Epic":
-            include = (colourList[j].id == s.epic);
-            break;
-          case "Platform":
-            include = (colourList[j].id == s.platform);
-            break;
-          default:
-            alert("BBBBBAD");
-            break;
-        }
+        var include = getInclude(_colmode,colourList,j,s);
         if (include){
           s.c = colourList[j].c;
           break
