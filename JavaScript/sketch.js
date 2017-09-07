@@ -2,8 +2,6 @@
 
 var serverAddress = 'http://svn.na-dc.ah.ab:8080';
 
-var options = {};
-
 var JSONfile;
 var piData = {};
 var wholePi = [];
@@ -12,12 +10,14 @@ var stories = [];
 var posMode = "Assignee";
 var colMode = "Assignee";
 
-var categoryList = [];
 var positionList = [];
 var colourList = [];
 
 var posSel;
 var colSel;
+
+var categories = ["Assignee","Epic","Platform"];
+
 
 function preload(){
   JSONfile = loadJSON("./test.json",gotJSON);
@@ -42,16 +42,16 @@ function setup() {
 
     posSel = createSelect();
     posSel.position(10, 10);
-    posSel.option('Assignee');
-    posSel.option('Epic');
-    posSel.option('Platform');
+    for(var category of categories){
+      posSel.option(category);
+    }
     posSel.changed(function(){posMode = posSel.value();setAllMode(posMode,colMode);});
 
     colSel = createSelect();
     colSel.position(10, 30);
-    colSel.option('Assignee');
-    colSel.option('Epic');
-    colSel.option('Platform');
+    for(var category of categories){
+      colSel.option(category);
+    }
     colSel.changed(function(){colMode = colSel.value();setAllMode(posMode,colMode);});
 }
 
@@ -60,6 +60,7 @@ function draw(){
   //pieChart(300,wholePi);
   colorMode(HSB);
 
+  //show group names
   for (var i = 0; i < positionList.length; i++) {
     var l = positionList[i];
     //stroke(l.c,150,150);
@@ -70,6 +71,7 @@ function draw(){
     text(l.id,l.x,l.y);
   }
 
+  //update and draw stories
   for (var i = 0; i < stories.length; i++) {
     var s = stories[i];
     s.behaviors();
